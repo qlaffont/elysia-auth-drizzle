@@ -13,7 +13,7 @@
     "migration:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@bogeychan/elysia-logger": "^0.0.19",
+    "@bogeychan/elysia-logger": "^0.0.20",
     "elysia": "latest",
     "jsonwebtoken": "^9.0.2",
     "unify-errors": "^1.2.227"
