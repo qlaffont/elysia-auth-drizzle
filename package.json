@@ -1,0 +1,42 @@
+{
+  "name": "elysia-auth-drizzle",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "bun test --coverage",
+    "test:watch": "bun test --watch",
+    "lint": "eslint src test",
+    "build": "tsup src/index.ts",
+    "migration:make": "drizzle-kit generate:pg",
+    "migration:up": "drizzle-kit push:pg",
+    "migration:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@bogeychan/elysia-logger": "^0.0.19",
+    "elysia": "latest",
+    "jsonwebtoken": "^9.0.2",
+    "unify-errors": "^1.2.227"
+  },
+  "devDependencies": {
+    "@elysiajs/eden": "^1.0.6",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@typescript-eslint/eslint-plugin": "6.19.0",
+    "@typescript-eslint/parser": "6.19.0",
+    "bun-types": "latest",
+    "drizzle-kit": "^0.20.14",
+    "drizzle-orm": "^0.30.5",
+    "eslint": "8.56.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-prettier": "5.1.3",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "pg": "^8.11.3",
+    "postgres": "^3.4.4",
+    "prettier": "3.2.4",
+    "tsup": "^8.0.2",
+    "unify-elysia": "^1.0.5"
+  },
+  "module": "dist/index.mjs",
+  "packageManager": "pnpm@8.15.5+sha256.4b4efa12490e5055d59b9b9fc9438b7d581a6b7af3b5675eb5c5f447cee1a589"
+}
