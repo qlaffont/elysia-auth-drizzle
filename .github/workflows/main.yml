@@ -1,0 +1,27 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    name: Build, lint, and test on latest Bun 
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install
+
+      - name: Lint
+        run: bun lint
+
+      - name: Test
+        run: bun test
+
+      - name: Build
+        run: bun run build

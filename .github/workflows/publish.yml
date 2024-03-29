@@ -1,0 +1,60 @@
+name: publish
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
+
+jobs:
+  build:
+    name: Publish
+
+    if: startsWith(github.head_ref, 'renovate/')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'src/**'
+              - 'package.json'
+      - name: Checkout repo
+        if: steps.changes.outputs.src == 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.changes.outputs.src == 'true'
+        run: |
+          git config user.name "${{ secrets.USER_NAME }}"
+          git config user.email "${{ secrets.USER_EMAIL }}"
+
+      - uses: oven-sh/setup-bun@v1
+
+      - run: bun install
+
+      - name: Lint
+        run: bun lint
+
+      - name: Test
+        run: bun test
+
+      - name: Build
+        run: bun run build
+
+      - name: Bump version
+        if: steps.changes.outputs.src == 'true'
+        uses: qzb/standard-version-action@v1.0.13
+
+      - if: steps.changes.outputs.src == 'true'
+        run: |
+          git config --global user.name "${{ secrets.USER_NAME }}"
+          git config --global user.email "${{ secrets.USER_EMAIL }}"
+          git push --follow-tags origin master
+      - if: steps.changes.outputs.src == 'true'
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
