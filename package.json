@@ -9,7 +9,7 @@
     "lint": "eslint src test",
     "build": "tsup src/index.ts",
     "migration:make": "drizzle-kit generate:pg",
-    "migration:up": "drizzle-kit push:pg",
+    "migration:up": "bun test/utils/migrate.ts",
     "migration:studio": "drizzle-kit studio"
   },
   "dependencies": {
