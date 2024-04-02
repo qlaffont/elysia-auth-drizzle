@@ -1,6 +1,6 @@
 {
   "name": "elysia-auth-drizzle",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
@@ -12,9 +12,11 @@
     "migration:up": "bun test/utils/migrate.ts",
     "migration:studio": "drizzle-kit studio"
   },
+  "peerDependencies": {
+    "elysia": "^1.0.9"
+  },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.0.19",
-    "elysia": "1.0.9",
     "jsonwebtoken": "^9.0.2",
     "unify-errors": "^1.2.227"
   },
