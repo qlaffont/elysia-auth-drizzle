@@ -1,10 +1,10 @@
 import { describe, it } from 'bun:test';
-import Elysia from 'elysia';
 
+import { signCookie } from '../src/elysia-auth-plugin';
 import { app } from './utils/server.test';
 import { cleanToken, generateToken, testRoute } from './utils/utils';
 
-let server: Elysia;
+let server;
 
 describe('Access Token value', () => {
   it('should be able to access token from authorization header', async () => {
@@ -69,24 +69,45 @@ describe('Access Token value', () => {
     await cleanToken(token);
   });
 
-  //TODO Wait answer
-  // it('should be able to access token from Authorization cookie', async () => {
-  //   server = await app();
+  it('should be able to access token from Authorization cookie', async () => {
+    server = await app();
 
-  //   const token = await generateToken();
+    const token = await generateToken();
 
-  //   const response = await server.inject({
-  //     method: 'GET',
-  //     url: '/not-public-success',
-  //     cookies: {
-  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //       //@ts-ignore
-  //       authorization: server.signCookie(token.accessToken),
-  //     },
-  //   });
+    await testRoute(
+      server,
+      `/not-public-success`,
+      'GET',
+      {
+        headers: {
+          Cookie: `authorization=${token.accessToken}`,
+        },
+      },
+      { supposedStatus: 200 },
+    );
 
-  //   expect(response.statusCode).toBe(200);
+    await cleanToken(token);
+  });
 
-  //   await cleanToken(token);
-  // });
+  it('should be able to access token from Authorization cookie (SIGNED)', async () => {
+    server = await app({
+      cookieSecret: 'test',
+    });
+
+    const token = await generateToken();
+
+    await testRoute(
+      server,
+      `/not-public-success`,
+      'GET',
+      {
+        headers: {
+          Cookie: `authorization=${await signCookie(token.accessToken, 'test')}`,
+        },
+      },
+      { supposedStatus: 200 },
+    );
+
+    await cleanToken(token);
+  });
 });

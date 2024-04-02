@@ -7,9 +7,55 @@ import { Unauthorized } from 'unify-errors';
 import { currentUrlAndMethodIsAllowed } from './currentUrlAndMethodIsAllowed';
 import { HTTPMethods, UrlConfig } from './type';
 
+//REF: https://github.com/elysiajs/elysia/blob/main/src/utils.ts
+const encoder = new TextEncoder();
+function removeTrailingEquals(digest: string): string {
+  let trimmedDigest = digest;
+  while (trimmedDigest.endsWith('=')) {
+    trimmedDigest = trimmedDigest.slice(0, -1);
+  }
+  return trimmedDigest;
+}
+
+export const signCookie = async (val: string, secret: string | null) => {
+  if (typeof val !== 'string')
+    throw new TypeError('Cookie value must be provided as a string.');
+
+  if (secret === null) throw new TypeError('Secret key must be provided.');
+
+  const secretKey = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const hmacBuffer = await crypto.subtle.sign(
+    'HMAC',
+    secretKey,
+    encoder.encode(val),
+  );
+
+  return (
+    val + '.' + removeTrailingEquals(Buffer.from(hmacBuffer).toString('base64'))
+  );
+};
+export const unsignCookie = async (input: string, secret: string | null) => {
+  if (typeof input !== 'string')
+    throw new TypeError('Signed cookie string must be provided.');
+
+  if (null === secret) throw new TypeError('Secret key must be provided.');
+
+  const tentativeValue = input.slice(0, input.lastIndexOf('.'));
+  const expectedInput = await signCookie(tentativeValue, secret);
+
+  return expectedInput === input ? tentativeValue : false;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Options<T> {
-  secret: string;
+  jwtSecret: string;
+  cookieSecret?: string;
   drizzle: {
     //@ts-ignore
     db;
@@ -19,21 +65,37 @@ export interface Options<T> {
     usersSchema;
   };
   config?: UrlConfig[];
-  cookieIsSigned?: boolean;
   userValidation?: (user: T) => void | Promise<void>;
   verifyAccessTokenOnlyInJWT?: boolean;
 }
 
-export const getAccessTokenFromRequest = (req: {
-  cookies?: Record<string, { value: string }>;
-  query?: Record<string, string | undefined>;
-  headers: Record<string, string | undefined>;
-}) => {
+export const getAccessTokenFromRequest = async (
+  req: {
+    cookies?: Record<string, { value: string }>;
+    query?: Record<string, string | undefined>;
+    headers: Record<string, string | undefined>;
+  },
+  cookieSecret?: string,
+) => {
   let token: string | undefined;
 
-  //TODO: TO verify, because cookies seems to be unsigned before executing
   if (req.cookies && req.cookies['authorization']) {
-    token = req.cookies['authorization'].value;
+    if (cookieSecret) {
+      const result = await unsignCookie(
+        req.cookies['authorization'].value,
+        cookieSecret,
+      );
+
+      if (result === false) {
+        throw new Unauthorized({
+          error: 'Token is not valid',
+        });
+      } else {
+        token = result;
+      }
+    } else {
+      token = req.cookies['authorization'].value;
+    }
   }
 
   if ((req.query as { access_token: string }).access_token) {
@@ -77,7 +139,7 @@ const checkTokenValidity =
       }
 
       try {
-        verify(tokenValue, options.secret);
+        verify(tokenValue, options.jwtSecret);
 
         if (!tokenIsValidInDB) {
           throw 'Token not valid in DB';
@@ -121,9 +183,11 @@ const checkTokenValidity =
   };
 
 export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
-  const defaultOptions: Omit<Required<Options<T>>, 'secret' | 'drizzle'> = {
+  const defaultOptions: Omit<
+    Required<Options<T>>,
+    'jwtSecret' | 'cookieSecret' | 'drizzle'
+  > = {
     config: [],
-    cookieIsSigned: false,
     userValidation: () => {},
     verifyAccessTokenOnlyInJWT: false,
   };
@@ -133,7 +197,7 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
     ...userOptions,
   } as Required<Options<T>>;
 
-  return new Elysia({ name: 'elysia-auth-drizzle', seed: userOptions }).derive(
+  return new Elysia({ name: 'elysia-auth-drizzle' }).derive(
     { as: 'global' },
     async ({ headers, query, cookie, request }) => {
       let isConnected = false;
@@ -147,7 +211,10 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
         method: request.method as HTTPMethods,
       };
 
-      const tokenValue: string | undefined = getAccessTokenFromRequest(req);
+      const tokenValue: string | undefined = await getAccessTokenFromRequest(
+        req,
+        options?.cookieSecret,
+      );
 
       const res = await checkTokenValidity<T>(
         options as Options<T>,

@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { expect } from 'bun:test';
 import { eq } from 'drizzle-orm';
-import Elysia from 'elysia';
 import { sign } from 'jsonwebtoken';
 
 import { HTTPMethods } from '../../src/type';
@@ -35,7 +34,7 @@ export const cleanToken = async (token: typeof tokens.$inferSelect) => {
 };
 
 export const testRoute = async (
-  server: Elysia,
+  server: any,
   routePath: string,
   method: HTTPMethods,
   data: {
@@ -58,24 +57,40 @@ export const testRoute = async (
         method: method,
       }),
     )
-    .then(async (res) => {
-      status = res.status;
+    .then(
+      async (res: {
+        status: number;
+        json: () =>
+          | string
+          | Record<string, unknown>
+          | PromiseLike<string | Record<string, unknown> | null | undefined>
+          | null
+          | undefined;
+        text: () =>
+          | string
+          | Record<string, unknown>
+          | PromiseLike<string | Record<string, unknown> | null | undefined>
+          | null
+          | undefined;
+      }) => {
+        status = res.status;
 
-      try {
-        content = await res.json();
-        json = true;
+        try {
+          content = await res.json();
+          json = true;
+          return;
+          // eslint-disable-next-line no-empty
+        } catch (error) {}
+
+        try {
+          content = await res.text();
+          return;
+          // eslint-disable-next-line no-empty
+        } catch (error) {}
+
         return;
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
-
-      try {
-        content = await res.text();
-        return;
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
-
-      return;
-    });
+      },
+    );
 
   if (validation.supposedStatus) {
     expect(status!).toBe(validation.supposedStatus);

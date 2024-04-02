@@ -47,7 +47,6 @@ export const app = <T>(config?: Partial<ElysiaAuthDrizzlePluginConfig<T>>) => {
         level: 'error',
       }),
     )
-    //TODO : ISSUE WITH TS
     .use(pluginUnifyElysia({}))
     .use(
       elysiaAuthDrizzlePlugin<typeof users.$inferSelect>({
@@ -57,12 +56,14 @@ export const app = <T>(config?: Partial<ElysiaAuthDrizzlePluginConfig<T>>) => {
             method: 'GET',
           },
         ],
-        secret: 'test',
+        jwtSecret: 'test',
         drizzle: {
           db: db,
           usersSchema: users,
           tokensSchema: tokens,
         },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
         userValidation: (user) => {
           user;
         },
