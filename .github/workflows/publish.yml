@@ -50,6 +50,9 @@ jobs:
 
       - run: bun install
 
+      - name: Migration Up
+        run: bun run migration:up
+
       - name: Lint
         run: bun lint
 
