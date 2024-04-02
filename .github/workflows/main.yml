@@ -15,6 +15,7 @@ jobs:
         env:
           POSTGRES_USER: docker
           POSTGRES_PASSWORD: docker
+          POSTGRES_DB: project
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
