@@ -71,7 +71,7 @@ export interface Options<T> {
 
 export const getAccessTokenFromRequest = async (
   req: {
-    cookies?: Record<string, { value: string }>;
+    cookie?: Record<string, { value: string }>;
     query?: Record<string, string | undefined>;
     headers: Record<string, string | undefined>;
   },
@@ -80,13 +80,13 @@ export const getAccessTokenFromRequest = async (
   let token: string | undefined;
 
   if (
-    req.cookies &&
-    req.cookies['authorization'] &&
-    req.cookies['authorization'].value
+    req.cookie &&
+    req.cookie['authorization'] &&
+    req.cookie['authorization'].value
   ) {
     if (cookieSecret) {
       const result = await unsignCookie(
-        req.cookies['authorization'].value,
+        req.cookie['authorization'].value,
         cookieSecret,
       );
 
@@ -98,7 +98,7 @@ export const getAccessTokenFromRequest = async (
         token = result;
       }
     } else {
-      token = req.cookies['authorization'].value;
+      token = req.cookie['authorization'].value;
     }
   }
 
@@ -210,7 +210,7 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
       const req = {
         headers,
         query,
-        cookies: cookie,
+        cookie,
         url: new URL(request.url).pathname,
         method: request.method as HTTPMethods,
       };
@@ -224,7 +224,7 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
         options as Options<T>,
         req.url,
         req.method,
-        req.cookies,
+        req.cookie,
       )(tokenValue);
 
       if (res) {
