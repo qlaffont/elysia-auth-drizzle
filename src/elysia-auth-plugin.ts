@@ -79,7 +79,11 @@ export const getAccessTokenFromRequest = async (
 ) => {
   let token: string | undefined;
 
-  if (req.cookies && req.cookies['authorization']) {
+  if (
+    req.cookies &&
+    req.cookies['authorization'] &&
+    req.cookies['authorization'].value
+  ) {
     if (cookieSecret) {
       const result = await unsignCookie(
         req.cookies['authorization'].value,
