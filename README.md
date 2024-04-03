@@ -5,7 +5,7 @@ Library who handle authentification (Header/Cookie/QueryParam).
 ## Usage
 
 ```typescript
-import { pluginUnifyElysia } from 'unify-elysia';
+import { elysiaAuthDrizzlePlugin } from 'elysia-auth-drizzle';
 
 export const app = new Elysia()
   .use(
