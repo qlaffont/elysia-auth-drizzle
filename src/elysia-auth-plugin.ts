@@ -113,7 +113,7 @@ export const getAccessTokenFromRequest = async (
   return token;
 };
 
-const checkTokenValidity =
+export const checkTokenValidity =
   <T>(
     options: Options<T>,
     currentUrl: string,

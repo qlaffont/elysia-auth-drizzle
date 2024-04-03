@@ -1,4 +1,5 @@
 import {
+  checkTokenValidity as CheckTokenValidity,
   elysiaAuthDrizzlePlugin as plugin,
   getAccessTokenFromRequest as GetAccessTokenFromRequest,
   Options,
@@ -19,3 +20,4 @@ export const elysiaAuthDrizzlePlugin = plugin;
 export const getAccessTokenFromRequest = GetAccessTokenFromRequest;
 export type ElysiaUrlConfig = UrlConfig;
 export type ElysiaAuthDrizzlePluginConfig<T> = Options<T>;
+export const checkTokenValidity = CheckTokenValidity;
