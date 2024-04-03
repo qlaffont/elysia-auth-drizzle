@@ -107,7 +107,7 @@ export const getAccessTokenFromRequest = async (
   }
 
   if (req.headers.authorization) {
-    token = (req.headers.authorization as string).trim().split(' ')[0];
+    token = (req.headers.authorization as string).trim().split(' ')[1];
   }
 
   return token;
