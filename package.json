@@ -27,8 +27,8 @@
   "devDependencies": {
     "@elysiajs/eden": "^1.0.6",
     "@types/jsonwebtoken": "^9.0.6",
-    "@typescript-eslint/eslint-plugin": "7.8.0",
-    "@typescript-eslint/parser": "7.8.0",
+    "@typescript-eslint/eslint-plugin": "7.9.0",
+    "@typescript-eslint/parser": "7.9.0",
     "bun-types": "latest",
     "drizzle-kit": "^0.21.0",
     "drizzle-orm": "^0.30.5",
