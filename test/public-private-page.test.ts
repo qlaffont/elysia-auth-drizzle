@@ -1,5 +1,6 @@
 import { describe, it } from 'bun:test';
 import { eq } from 'drizzle-orm';
+import { sign } from 'jsonwebtoken';
 
 import { db } from './utils/db';
 import { tokens } from './utils/schema';
@@ -127,6 +128,48 @@ describe('Public/Private page', () => {
       );
 
       await cleanToken(token);
+    });
+
+    it('should return page if token is valid and server is in JWT ONLY', async () => {
+      server = await app({ verifyAccessTokenOnlyInJWT: true });
+
+      const jwtAccessToken = await sign({ id: userData.id }, 'test', {
+        expiresIn: '1d',
+      });
+      await testRoute(
+        server,
+        `/not-public-success`,
+        'GET',
+        {
+          headers: {
+            authorization: `Bearer ${jwtAccessToken}`,
+          },
+        },
+        {
+          supposedStatus: 200,
+        },
+      );
+    });
+
+    it('should not return page if token is valid and server is not in JWT ONLY', async () => {
+      server = await app();
+
+      const jwtAccessToken = await sign({ id: userData.id }, 'test', {
+        expiresIn: '1d',
+      });
+      await testRoute(
+        server,
+        `/not-public-success`,
+        'GET',
+        {
+          headers: {
+            authorization: `Bearer ${jwtAccessToken}`,
+          },
+        },
+        {
+          supposedStatus: 401,
+        },
+      );
     });
 
     it('should return unauthorized token is invalid', async () => {

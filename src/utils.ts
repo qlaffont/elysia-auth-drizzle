@@ -51,11 +51,13 @@ export const createUserToken =
         },
       );
 
-      await db.insert(tokensSchema).values({
-        accessToken,
-        refreshToken,
-        ownerId: userId,
-      });
+      if (tokensSchema) {
+        await db.insert(tokensSchema).values({
+          accessToken,
+          refreshToken,
+          ownerId: userId,
+        });
+      }
 
       return {
         accessToken,
@@ -99,9 +101,11 @@ export const refreshUserToken =
       try {
         verify(refreshToken, refreshSecret || secret);
       } catch (error) {
-        await db
-          .delete(tokensSchema)
-          .where(eq(tokensSchema.refreshToken, refreshToken));
+        if (tokensSchema) {
+          await db
+            .delete(tokensSchema)
+            .where(eq(tokensSchema.refreshToken, refreshToken));
+        }
 
         throw new BadRequest({
           error: 'Token expired',
@@ -109,30 +113,37 @@ export const refreshUserToken =
       }
 
       let token;
-      const result = await db
-        .select()
-        .from(tokensSchema)
-        .where(eq(tokensSchema.refreshToken, refreshToken))
-        .limit(1);
+      if (tokensSchema) {
+        const result = await db
+          .select()
+          .from(tokensSchema)
+          .where(eq(tokensSchema.refreshToken, refreshToken))
+          .limit(1);
 
-      if (result.length === 0) {
-        throw new NotFound({
-          error: 'Token not found',
-        });
+        if (result.length === 0) {
+          throw new NotFound({
+            error: 'Token not found',
+          });
+        } else {
+          token = result[0];
+        }
       } else {
-        token = result[0];
+        //Get Data from expired Token
       }
 
       // Renew Token
       const accessToken = sign({ id: token.ownerId }, secret, {
         expiresIn: accessTokenTime,
       });
-      await db
-        .update(tokensSchema)
-        .set({
-          accessToken,
-        })
-        .where(eq(tokensSchema.id, token.id));
+
+      if (tokensSchema) {
+        await db
+          .update(tokensSchema)
+          .set({
+            accessToken,
+          })
+          .where(eq(tokensSchema.id, token.id));
+      }
 
       return { accessToken, refreshToken };
     };

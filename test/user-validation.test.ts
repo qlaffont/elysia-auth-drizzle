@@ -14,9 +14,6 @@ describe('User validation', () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         connectedUserId = user.id;
-        console.log('=====');
-        console.log(connectedUserId);
-        console.log('=====');
       },
     });
 

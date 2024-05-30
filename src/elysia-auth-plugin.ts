@@ -60,7 +60,7 @@ export interface Options<T> {
     //@ts-ignore
     db;
     //@ts-ignore
-    tokensSchema;
+    tokensSchema?;
     //@ts-ignore
     usersSchema;
   };
@@ -125,28 +125,26 @@ export const checkTokenValidity =
   ): Promise<{ connectedUser: T; isConnected: true } | void> => {
     //Check if token existing
     if (tokenValue) {
-      let token;
-      let tokenIsValidInDB = true;
-
-      if (!options.verifyAccessTokenOnlyInJWT) {
-        const result = await options.drizzle.db
-          .select()
-          .from(options.drizzle.tokensSchema)
-          .where(eq(options.drizzle.tokensSchema.accessToken, tokenValue))
-          .limit(1);
-
-        if (result.length !== 1) {
-          tokenIsValidInDB = false;
-        } else {
-          token = result[0];
-        }
-      }
+      let userId;
 
       try {
-        verify(tokenValue, options.jwtSecret);
+        const tokenData = verify(tokenValue, options.jwtSecret);
 
-        if (!tokenIsValidInDB) {
-          throw 'Token not valid in DB';
+        if (!options.verifyAccessTokenOnlyInJWT) {
+          const result = await options.drizzle.db
+            .select()
+            .from(options.drizzle.tokensSchema)
+            .where(eq(options.drizzle.tokensSchema.accessToken, tokenValue))
+            .limit(1);
+
+          if (result.length !== 1) {
+            throw 'Token not valid in DB';
+          } else {
+            userId = result[0].ownerId;
+          }
+        } else {
+          //@ts-ignore
+          userId = tokenData.id;
         }
       } catch (error) {
         //If token is not valid and If user is not connected and url is not public
@@ -172,7 +170,7 @@ export const checkTokenValidity =
       const result = await options.drizzle.db
         .select()
         .from(options.drizzle.usersSchema)
-        .where(eq(options.drizzle.usersSchema.id, token!.ownerId))
+        .where(eq(options.drizzle.usersSchema.id, userId))
         .limit(1);
 
       const user = result[0];
