@@ -5,65 +5,73 @@ import { sign, verify } from 'jsonwebtoken';
 import { BadRequest, NotFound } from 'unify-errors';
 
 export const createUserToken =
-  //@ts-ignore
+  ({
+    db,
+    usersSchema,
+    tokensSchema,
+  }: {
+    //@ts-ignore
+    db;
+    //@ts-ignore
+    usersSchema;
+    //@ts-ignore
+    tokensSchema?;
+  }) =>
+  async (
+    userId: string,
+    {
+      secret,
+      refreshSecret,
+      accessTokenTime,
+      refreshTokenTime,
+    }: {
+      secret: string;
+      refreshSecret?: string;
+      accessTokenTime: string;
+      refreshTokenTime: string;
+    },
+  ) => {
+    let user;
 
+    try {
+      user = await db
+        .select()
+        .from(usersSchema)
+        .where(eq(usersSchema.id, userId))
+        .limit(1);
 
-    ({ db, usersSchema, tokensSchema }) =>
-    async (
-      userId: string,
-      {
-        secret,
-        refreshSecret,
-        accessTokenTime,
-        refreshTokenTime,
-      }: {
-        secret: string;
-        refreshSecret?: string;
-        accessTokenTime: string;
-        refreshTokenTime: string;
-      },
-    ) => {
-      let user;
-
-      try {
-        user = await db
-          .select()
-          .from(usersSchema)
-          .where(eq(usersSchema.id, userId))
-          .limit(1);
-
-        if (user.length === 0) {
-          throw new NotFound({ error: 'User not found' });
-        }
-      } catch (error) {
+      if (user.length === 0) {
         throw new NotFound({ error: 'User not found' });
       }
+    } catch (error) {
+      throw new NotFound({ error: 'User not found' });
+    }
 
-      const accessToken = sign({ id: userId }, secret, {
-        expiresIn: accessTokenTime,
-      });
+    const accessToken = sign({ id: userId }, secret, {
+      expiresIn: accessTokenTime,
+    });
 
-      const refreshToken = sign(
-        { id: userId, date: new Date().getTime },
-        refreshSecret || secret,
-        {
-          expiresIn: refreshTokenTime,
-        },
-      );
+    const refreshToken = sign(
+      { id: userId, date: new Date().getTime },
+      refreshSecret || secret,
+      {
+        expiresIn: refreshTokenTime,
+      },
+    );
 
-      if (tokensSchema) {
-        await db.insert(tokensSchema).values({
-          accessToken,
-          refreshToken,
-          ownerId: userId,
-        });
-      }
-
-      return {
+    if (tokensSchema) {
+      await db.insert(tokensSchema).values({
         accessToken,
         refreshToken,
-      };
+        ownerId: userId,
+      });
+    }
+
+    return {
+      accessToken,
+      refreshToken,
     };
+  };
 
 export const removeUserToken =
   //@ts-ignore
