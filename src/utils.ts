@@ -97,7 +97,15 @@ export const refreshUserToken =
   //@ts-ignore
 
 
-    ({ db, tokensSchema }) =>
+    ({
+      db,
+      tokensSchema,
+    }: {
+      //@ts-ignore
+      db;
+      //@ts-ignore
+      tokensSchema?;
+    }) =>
     async (
       refreshToken: string,
       {
