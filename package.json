@@ -44,5 +44,5 @@
     "unify-elysia": "^1.0.5"
   },
   "module": "dist/index.mjs",
-  "packageManager": "pnpm@9.1.2"
+  "packageManager": "pnpm@9.1.4"
 }
