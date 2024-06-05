@@ -112,7 +112,13 @@ export const refreshUserToken =
         secret,
         refreshSecret,
         accessTokenTime,
-      }: { secret: string; refreshSecret?: string; accessTokenTime: string },
+        ownerId,
+      }: {
+        secret: string;
+        refreshSecret?: string;
+        accessTokenTime: string;
+        ownerId?: string;
+      },
     ) => {
       try {
         verify(refreshToken, refreshSecret || secret);
@@ -148,7 +154,7 @@ export const refreshUserToken =
       }
 
       // Renew Token
-      const accessToken = sign({ id: token.ownerId }, secret, {
+      const accessToken = sign({ id: token?.ownerId || ownerId }, secret, {
         expiresIn: accessTokenTime,
       });
 
