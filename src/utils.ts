@@ -112,16 +112,17 @@ export const refreshUserToken =
         secret,
         refreshSecret,
         accessTokenTime,
-        ownerId,
       }: {
         secret: string;
         refreshSecret?: string;
         accessTokenTime: string;
-        ownerId?: string;
       },
     ) => {
+      let content;
       try {
-        verify(refreshToken, refreshSecret || secret);
+        content = verify(refreshToken, refreshSecret || secret) as {
+          id: string;
+        };
       } catch (error) {
         if (tokensSchema) {
           await db
@@ -154,7 +155,7 @@ export const refreshUserToken =
       }
 
       // Renew Token
-      const accessToken = sign({ id: token?.ownerId || ownerId }, secret, {
+      const accessToken = sign({ id: token?.ownerId || content?.id }, secret, {
         expiresIn: accessTokenTime,
       });
 
