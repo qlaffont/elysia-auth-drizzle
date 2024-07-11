@@ -20,7 +20,7 @@
     "elysia": "^1.0.9"
   },
   "dependencies": {
-    "@bogeychan/elysia-logger": "^0.0.22",
+    "@bogeychan/elysia-logger": "^0.1.0",
     "jsonwebtoken": "^9.0.2",
     "unify-errors": "^1.2.227"
   },
