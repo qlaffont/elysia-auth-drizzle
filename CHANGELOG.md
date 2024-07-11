@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.2.26 (2024-07-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @bogeychan/elysia-logger to ^0.1.0 ([8e0dd0a](https://github.com/qlaffont/elysia-auth-drizzle/commit/8e0dd0a857dcb736f86f56a45cac8af14eb070c5))
+
 ### 1.2.25 (2024-07-10)
 
 ### 1.2.24 (2024-07-10)
