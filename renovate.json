@@ -4,5 +4,18 @@
     "config:recommended"
   ],
   "automergeType": "pr",
-  "automerge": true
+  "automerge": true,
+  "ignoreDeps": [
+    "pg",
+    "postgres",
+    "@typescript-eslint/eslint-plugin",
+    "@typescript-eslint/parser",
+    "eslint",
+    "eslint-config-prettier",
+    "eslint-plugin-import",
+    "eslint-plugin-prettier",
+    "eslint-plugin-simple-import-sort",
+    "prettier",
+    "tsup"
+  ]
 }

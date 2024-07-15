@@ -22,6 +22,8 @@
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.0",
     "jsonwebtoken": "^9.0.2",
+    "drizzle-kit": "^0.23.0",
+    "drizzle-orm": "^0.32.0",
     "unify-errors": "^1.2.227"
   },
   "devDependencies": {
@@ -30,8 +32,6 @@
     "@typescript-eslint/eslint-plugin": "7.16.0",
     "@typescript-eslint/parser": "7.16.0",
     "bun-types": "latest",
-    "drizzle-kit": "^0.23.0",
-    "drizzle-orm": "^0.32.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "2.29.1",
