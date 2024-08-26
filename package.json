@@ -1,6 +1,6 @@
 {
   "name": "elysia-auth-drizzle",
-  "version": "1.2.33",
+  "version": "1.2.34",
   "main": "./dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
