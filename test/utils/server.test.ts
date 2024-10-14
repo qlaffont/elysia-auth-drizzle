@@ -1,4 +1,3 @@
-import { logger } from '@bogeychan/elysia-logger';
 import { Elysia } from 'elysia';
 import { pluginUnifyElysia } from 'unify-elysia';
 
@@ -42,11 +41,6 @@ export const defaultSuccess = () => {
 
 export const app = <T>(config?: Partial<ElysiaAuthDrizzlePluginConfig<T>>) => {
   const server = new Elysia()
-    .use(
-      logger({
-        level: 'error',
-      }),
-    )
     .use(pluginUnifyElysia({}))
     .use(
       elysiaAuthDrizzlePlugin<typeof users.$inferSelect>({
