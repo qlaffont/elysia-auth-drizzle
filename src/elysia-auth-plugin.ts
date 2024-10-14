@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { eq } from 'drizzle-orm';
-import Elysia from 'elysia';
+import { Elysia } from 'elysia';
 import { verify } from 'jsonwebtoken';
 import { Unauthorized } from 'unify-errors';
 
