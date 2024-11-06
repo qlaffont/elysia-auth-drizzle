@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.2.49 (2024-11-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency drizzle-kit to ^0.28.0 ([a18cb3c](https://github.com/qlaffont/elysia-auth-drizzle/commit/a18cb3ce6e2ab0b5cddb33b94ff46c78a26effd1))
+
 ### 1.2.48 (2024-10-30)
 
 
