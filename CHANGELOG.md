@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.2.81 (2025-03-17)
+
 ### 1.2.80 (2025-03-13)
 
 ### 1.2.79 (2025-03-10)
