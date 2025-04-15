@@ -23,7 +23,7 @@
     "@bogeychan/elysia-logger": "^0.1.4",
     "jsonwebtoken": "^9.0.2",
     "drizzle-kit": "^0.31.0",
-    "drizzle-orm": "^0.41.0",
+    "drizzle-orm": "^0.42.0",
     "unify-errors": "^1.2.227"
   },
   "devDependencies": {
