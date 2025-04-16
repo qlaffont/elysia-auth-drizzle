@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.2.89 (2025-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency drizzle-orm to ^0.42.0 ([#114](https://github.com/qlaffont/elysia-auth-drizzle/issues/114)) ([f578be4](https://github.com/qlaffont/elysia-auth-drizzle/commit/f578be4105402e9e0430335092f467dea15899e7))
+
 ### 1.2.88 (2025-04-15)
 
 
