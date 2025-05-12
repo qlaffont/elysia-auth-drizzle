@@ -234,7 +234,7 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
       // If user is not connected and url is not public
       if (
         !isConnected &&
-        (options.prefix ? !req.url.startsWith(options.prefix) : true) &&
+        (options.prefix ? req.url.startsWith(options.prefix) : true) &&
         !currentUrlAndMethodIsAllowed(
           req.url,
           req.method as HTTPMethods,
