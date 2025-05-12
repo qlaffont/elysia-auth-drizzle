@@ -67,6 +67,7 @@ export interface Options<T> {
   config?: UrlConfig[];
   userValidation?: (user: T) => void | Promise<void>;
   verifyAccessTokenOnlyInJWT?: boolean;
+  prefix?: string;
 }
 
 export const getAccessTokenFromRequest = async (
@@ -187,7 +188,7 @@ export const checkTokenValidity =
 export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
   const defaultOptions: Omit<
     Required<Options<T>>,
-    'jwtSecret' | 'cookieSecret' | 'drizzle'
+    'jwtSecret' | 'cookieSecret' | 'drizzle' | 'prefix'
   > = {
     config: [],
     userValidation: () => {},
@@ -233,6 +234,7 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
       // If user is not connected and url is not public
       if (
         !isConnected &&
+        (options.prefix ? !req.url.startsWith(options.prefix) : true) &&
         !currentUrlAndMethodIsAllowed(
           req.url,
           req.method as HTTPMethods,
