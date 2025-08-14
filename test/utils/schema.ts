@@ -17,11 +17,14 @@ export const users = pgTable(
       .$onUpdate(() => {
         return new Date();
       }),
+
   },
-  (users) => ({
-    idIdx: index('user_id_idx').on(users.id),
-  }),
+  (users) => [
+    index('user_id_idx').on(users.id),
+  ]
 );
+
+
 
 export const usersRelations = relations(users, ({ many }) => ({
   tokens: many(tokens),
@@ -43,9 +46,9 @@ export const tokens = pgTable(
 
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
-  (tokens) => ({
-    idIdx: index('tokens_id_idx').on(tokens.id),
-  }),
+  (tokens) => [
+    index('tokens_id_idx').on(tokens.id),
+  ]
 );
 
 export const tokensRelations = relations(tokens, ({ one }) => ({

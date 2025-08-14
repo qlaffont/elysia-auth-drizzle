@@ -203,7 +203,9 @@ export const elysiaAuthDrizzlePlugin = <T>(userOptions?: Options<T>) => {
   return new Elysia({ name: 'elysia-auth-drizzle' }).derive(
     { as: 'global' },
     async ({ headers, query, cookie, request }) => {
+      // Whether it is logged in
       let isConnected = false;
+      // 登录用户
       let connectedUser: T | undefined;
 
       const req = {

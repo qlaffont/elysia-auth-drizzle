@@ -1,10 +1,11 @@
-import type { Config } from 'drizzle-kit';
+import "dotenv/config";
+import { defineConfig } from "drizzle-kit";
 
-export default {
-  schema: './test/utils/schema.ts',
+export default defineConfig({
   out: './drizzle',
-  driver: 'pg', // 'pg' | 'mysql2' | 'better-sqlite' | 'libsql' | 'turso'
+  schema: './test/utils/schema.ts',
+  dialect: 'postgresql',
   dbCredentials: {
-    connectionString: 'postgres://docker:docker@127.0.0.1:5432/project',
+    url: process.env.DATABASE_URL!,
   },
-} satisfies Config;
+});
